@@ -2,6 +2,7 @@
  * Crow RSS Reader Card
  * GitHub: https://github.com/jamesmcginnis/crow-rss-reader-card
  *
+ * build: 2026-09-29.8 — editor text matches the \u22ef button and the Ask name.
  * build: 2026-09-29.7 — header button is a plain \u22ef More menu titled News; \u201cAsk AI\u201d is now Ask; on-card
  *   messages no longer mention AI (the editor still does).
  * build: 2026-09-29.6 — Topics (AI): each headline is tagged once with a topic; topic pills above the list, the topic
@@ -437,7 +438,7 @@ class CrowRSSEditor extends HTMLElement {
             <div class="toggle-list">
               <div class="toggle-item">
                 <div class="toggle-label">Enable AI features
-                  <div class="toggle-sublabel">Adds a ✨ button to the header for Ask AI, Announce and This week, and can group the same story from different feeds</div>
+                  <div class="toggle-sublabel">Adds a ⋯ button to the header for Ask, Announce and This week, and can group the same story from different feeds</div>
                 </div>
                 <label class="toggle-switch"><input type="checkbox" id="ai_features_enabled"><span class="toggle-track"></span></label>
               </div>
@@ -451,12 +452,12 @@ class CrowRSSEditor extends HTMLElement {
               </div>
               <div class="toggle-list" style="border-top:1px solid rgba(255,255,255,0.06);">
                 ${[
-                  ['ai_enable_ask', 'Ask AI', 'Ask a question about the headlines, or tap a suggestion'],
+                  ['ai_enable_ask', 'Ask', 'Ask a question about the headlines, or tap a suggestion'],
                   ['ai_enable_announce', 'Announce', 'A spoken briefing of the top stories, played on the speakers you pick'],
                   ['ai_enable_grouping', 'Same-story grouping', 'Collapses the same story from different feeds into one article with a “3 sources” badge'],
                   ['ai_enable_week', 'This week', 'The week’s main stories and numbers, from headlines this device has loaded'],
                   ['ai_enable_topics', 'Topics', 'Tags each headline with a topic, adds topic pills above the list and a topic breakdown to This week'],
-                  ['ai_enable_deep', 'Fetch full feeds', 'Also reads each feed directly (through a public CORS proxy) so Ask AI and This week see every story the feed publishes, not just the latest 10'],
+                  ['ai_enable_deep', 'Fetch full feeds', 'Also reads each feed directly (through a public CORS proxy) so Ask and This week see every story the feed publishes, not just the latest 10'],
                 ].map(([id, label, sub]) => `
                 <div class="toggle-item">
                   <div class="toggle-label">${label}<div class="toggle-sublabel">${sub}</div></div>
