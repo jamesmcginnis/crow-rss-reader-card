@@ -1,0 +1,6 @@
+{
+  "name": "Crow RSS Reader Card",
+  "render_readme": true,
+  "filename": "crow-rss-reader-card.js",
+  "type": "plugin"
+}
