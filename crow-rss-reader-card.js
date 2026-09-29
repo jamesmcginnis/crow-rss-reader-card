@@ -2,6 +2,8 @@
  * Crow RSS Reader Card
  * GitHub: https://github.com/jamesmcginnis/crow-rss-reader-card
  *
+ * build: 2026-09-29.9 — adding or removing a feed in the editor shows straight away and no longer overwrites
+ *   the first feed.
  * build: 2026-09-29.8 — editor text matches the \u22ef button and the Ask name.
  * build: 2026-09-29.7 — header button is a plain \u22ef More menu titled News; \u201cAsk AI\u201d is now Ask; on-card
  *   messages no longer mention AI (the editor still does).
@@ -200,6 +202,12 @@ class CrowRSSEditor extends HTMLElement {
   }
 
   _syncUI() {
+    // Feed list follows the config (e.g. after a YAML edit), unless a feed is being typed in
+    const feedBox = this.querySelector('#feeds-container');
+    if (feedBox && !feedBox.contains(document.activeElement)) {
+      const shown = [...feedBox.querySelectorAll('.feed-url')].map(i => i.value);
+      if (JSON.stringify(shown) !== JSON.stringify((this._config.feeds || []).map(f => String(f ?? '')))) this._redrawFeeds();
+    }
     const titleInput = this.querySelector('#title-input');
     if (titleInput && document.activeElement !== titleInput) titleInput.value = this._config.title || '';
 
@@ -667,7 +675,7 @@ class CrowRSSEditor extends HTMLElement {
     this.querySelector('#feeds-container').addEventListener('change', (e) => {
       const input = e.target.closest('.feed-url');
       if (!input) return;
-      const newFeeds = [...this._config.feeds];
+      const newFeeds = [...(this._config.feeds || [])];
       newFeeds[input.dataset.index] = input.value;
       this._updateConfig('feeds', newFeeds);
     });
@@ -675,17 +683,31 @@ class CrowRSSEditor extends HTMLElement {
     this.querySelector('#feeds-container').addEventListener('click', (e) => {
       const btn = e.target.closest('.remove-feed');
       if (!btn) return;
-      const newFeeds = [...this._config.feeds];
+      const newFeeds = [...(this._config.feeds || [])];
       newFeeds.splice(btn.dataset.index, 1);
-      this._initialized = false;
       this._updateConfig('feeds', newFeeds);
+      this._redrawFeeds();
     });
 
     this.querySelector('#add-feed').addEventListener('click', () => {
       const newFeeds = [...(this._config.feeds || []), ""];
-      this._initialized = false;
       this._updateConfig('feeds', newFeeds);
+      this._redrawFeeds();
+      [...this.querySelectorAll('.feed-url')].pop()?.focus();
     });
+  }
+
+  // Redraws just the feed rows. Home Assistant doesn't always hand the new config back to
+  // the editor, so the list can't wait for setConfig to show an added or removed feed.
+  _redrawFeeds() {
+    const box = this.querySelector('#feeds-container');
+    if (!box) return;
+    const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    box.innerHTML = (this._config.feeds || []).map((url, idx) => `
+      <div class="feed-row">
+        <input type="text" class="feed-input feed-url" data-index="${idx}" value="${esc(url)}" placeholder="https://example.com/feed.xml">
+        <button class="btn-delete remove-feed" data-index="${idx}">✕</button>
+      </div>`).join('');
   }
 
   _loadAgents() {
